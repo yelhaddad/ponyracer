@@ -15,8 +15,8 @@
 *.launch
 .settings/
 *.sublime-workspace
-**/.idea/workspace.xml
-**/.idea/tasks.xml
+*/.idea/workspace.xml
+*/.idea/tasks.xml
 
 # IDE - VSCode
 .vscode/*
