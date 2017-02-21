@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { By } from '@angular/platform-browser';
 
 import { AppModule } from '../app.module';
@@ -8,7 +9,7 @@ import { PonyComponent } from '../pony/pony.component';
 describe('RaceComponent', () => {
 
   beforeEach(() => TestBed.configureTestingModule({
-    imports: [AppModule]
+    imports: [AppModule, RouterTestingModule]
   }));
 
   it('should display a race name and its ponies', () => {
@@ -40,5 +41,8 @@ describe('RaceComponent', () => {
     const directives = fixture.debugElement.queryAll(By.directive(PonyComponent));
     expect(directives).not.toBeNull('You should use the PonyComponent in your template to display the ponies');
     expect(directives.length).toBe(5, 'You should have five pony components in your template');
+    const startInstant = element.querySelector('p');
+    expect(startInstant).not.toBeNull('You should use a `p` element to display the start instant');
+    expect(startInstant.textContent).toContain('ago', 'You should use the `fromNow` pipe you created to format the start instant');
   });
 });

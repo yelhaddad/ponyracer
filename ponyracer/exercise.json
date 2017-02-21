@@ -1,1 +1,1 @@
-{"pack":"14","id":7,"title":"Pony component","specs":[{"name":"src/app/pony/pony.component.spec.ts","hash":"14c53806ef63940cd82ff2516b3f2074eb8b9069"},{"name":"src/app/race/race.component.spec.ts","hash":"f20896cd1c523ec89c13edcf4811cf413102e5cc"}]}
+{"pack":"14","id":12,"title":"Custom validators in forms","specs":[{"name":"src/app/register/register.component.spec.ts","hash":"38f00c57c75e2b8ddc76c000ccda81eb20b303f0"},{"name":"src/app/user.service.spec.ts","hash":"521dd0cb1d7917f0c2ca79d4e0cfa7db8cdc3c54"}]}
