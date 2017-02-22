@@ -15,4 +15,10 @@ export class UserService {
       .map(res => res.json());
   }
 
+  authenticate(credentials): Observable<any> {
+    return this.http
+      .post('http://ponyracer.ninja-squad.com/api/users/authentication', credentials)
+      .map(res => res.json());
+  }
+
 }
