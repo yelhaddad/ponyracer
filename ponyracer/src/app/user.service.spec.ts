@@ -8,6 +8,12 @@ describe('UserService', () => {
 
   let userService: UserService;
   let mockBackend: MockBackend;
+  const originalLocalStorage = window.localStorage;
+  const mockLocalStorage = {
+    setItem: (key, value) => {},
+    getItem: key => null,
+    removeItem: key => {}
+  };
 
   const user = {
     id: 1,
@@ -33,7 +39,12 @@ describe('UserService', () => {
   beforeEach(() => {
     userService = TestBed.get(UserService);
     mockBackend = TestBed.get(MockBackend);
+    // we use this instead of jasmine.spyOn to make it pass on Firefox
+    // https://github.com/jasmine/jasmine/issues/299
+    Object.defineProperty(window, 'localStorage', { value: mockLocalStorage });
   });
+
+  afterEach(() => Object.defineProperty(window, 'localStorage', { value: originalLocalStorage }));
 
   it('should register a user', async(() => {
     // fake response
@@ -61,13 +72,39 @@ describe('UserService', () => {
       connection.mockRespond(response);
     });
 
-    // spy on userEvents
-    spyOn(userService.userEvents, 'next');
+    // spy on the store method
+    spyOn(userService, 'storeLoggedInUser');
 
     const credentials = { login: 'cedric', password: 'hello' };
-    userService.authenticate(credentials).subscribe(res => {
-      expect(res.id).toBe(1, 'You should transform the Response into a user using the `json()` method.');
-      expect(userService.userEvents.next).toHaveBeenCalledWith(res);
-    });
+    userService.authenticate(credentials)
+      .subscribe(() => expect(userService.storeLoggedInUser).toHaveBeenCalledWith(user));
   }));
+
+  it('should store the logged in user', () => {
+    spyOn(userService.userEvents, 'next');
+    spyOn(mockLocalStorage, 'setItem');
+
+    userService.storeLoggedInUser(user);
+
+    expect(userService.userEvents.next).toHaveBeenCalledWith(user);
+    expect(mockLocalStorage.setItem).toHaveBeenCalledWith('rememberMe', JSON.stringify(user));
+  });
+
+  it('should retrieve a user if one is stored', () => {
+    spyOn(userService.userEvents, 'next');
+    spyOn(mockLocalStorage, 'getItem').and.returnValue(JSON.stringify(user));
+
+    userService.retrieveUser();
+
+    expect(userService.userEvents.next).toHaveBeenCalledWith(user);
+  });
+
+  it('should retrieve no user if none stored', () => {
+    spyOn(userService.userEvents, 'next');
+    spyOn(mockLocalStorage, 'getItem');
+
+    userService.retrieveUser();
+
+    expect(userService.userEvents.next).not.toHaveBeenCalled();
+  });
 });

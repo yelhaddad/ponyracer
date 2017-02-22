@@ -13,6 +13,7 @@ export class UserService {
   public userEvents = new BehaviorSubject<UserModel>(undefined);
 
   constructor(private http: Http) {
+    this.retrieveUser();
   }
 
   register(login, password, birthYear): Observable<UserModel> {
@@ -25,7 +26,20 @@ export class UserService {
     return this.http
       .post('http://ponyracer.ninja-squad.com/api/users/authentication', credentials)
       .map(res => res.json())
-      .do((user: UserModel) => this.userEvents.next(user));
+      .do(user => this.storeLoggedInUser(user));
+  }
+
+  storeLoggedInUser(user) {
+    window.localStorage.setItem('rememberMe', JSON.stringify(user));
+    this.userEvents.next(user);
+  }
+
+  retrieveUser() {
+    const value = window.localStorage.getItem('rememberMe');
+    if (value) {
+      const user = JSON.parse(value);
+      this.userEvents.next(user);
+    }
   }
 
 }
